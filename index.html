@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0b">
+  <meta name="description" content="Your personal 90-day transformation companion.">
+  <title>REBUILD 90</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root {
+      --bg: #0b0b0b;
+      --panel: #151515;
+      --panel2: #1d1d1d;
+      --gold: #d5ad55;
+      --gold2: #f0d38b;
+      --text: #f4f0e7;
+      --muted: #9a978f;
+      --border: #303030;
+      --green: #7eb78b;
+      --red: #d77b70;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    button, input, textarea, select { font: inherit; }
+
+    button {
+      cursor: pointer;
+      border: 0;
+    }
+
+    .app {
+      width: min(100%, 1050px);
+      margin: auto;
+      padding: 20px;
+      padding-bottom: 90px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      color: var(--gold);
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: 4px;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+
+    .day-pill {
+      border: 1px solid var(--gold);
+      border-radius: 30px;
+      color: var(--gold2);
+      padding: 7px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 16px 0;
+      scrollbar-width: thin;
+    }
+
+    nav button {
+      background: var(--panel);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 9px 14px;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    nav button.active {
+      background: var(--gold);
+      color: #111;
+      border-color: var(--gold);
+      font-weight: bold;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    h1 {
+      font-size: clamp(27px, 5vw, 39px);
+      margin: 14px 0 5px;
+      line-height: 1.15;
+    }
+
+    h2 {
+      font-size: 19px;
+      margin: 0 0 14px;
+    }
+
+    h3 {
+      font-size: 15px;
+      margin: 0 0 10px;
+    }
+
+    p { color: var(--muted); }
+
+    .eyebrow {
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 18px;
+      margin: 14px 0;
+    }
+
+    .stat {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--gold2);
+    }
+
+    .muted { color: var(--muted); font-size: 13px; }
+
+    .progress-track {
+      height: 9px;
+      border-radius: 20px;
+      background: #333;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #a77d2f, #f0d38b);
+      transition: width .25s;
+    }
+
+    .task {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .task:last-child { border-bottom: 0; }
+
+    .task input {
+      accent-color: var(--gold);
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    .task label { flex: 1; }
+    .task small { display: block; color: var(--muted); }
+
+    .done label {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .gold-button {
+      background: var(--gold);
+      color: #111;
+      padding: 11px 16px;
+      border-radius: 9px;
+      font-weight: bold;
+    }
+
+    .secondary-button {
+      background: var(--panel2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 9px;
+    }
+
+    .danger-button {
+      background: #3a1c1a;
+      color: #f0aaa2;
+      padding: 9px 12px;
+      border-radius: 8px;
+    }
+
+    .field {
+      width: 100%;
+      background: #101010;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 9px;
+      padding: 12px;
+      margin: 7px 0 14px;
+    }
+
+    textarea.field {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .row > * { flex: 1; }
+
+    .entry {
+      padding: 13px;
+      background: #101010;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+
+    .entry p {
+      white-space: pre-wrap;
+      color: var(--text);
+    }
+
+    .entry small { color: var(--muted); }
+
+    .quote {
+      border-left: 3px solid var(--gold);
+      padding: 10px 15px;
+      color: var(--gold2);
+      font-size: 17px;
+      margin: 20px 0;
+    }
+
+    .notice {
+      border: 1px solid #5b4827;
+      background: #211b10;
+      color: var(--gold2);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px;
+    }
+
+    .phase {
+      border-left: 2px solid var(--gold);
+      padding: 3px 0 12px 15px;
+      margin: 10px 0;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      padding: 35px 0 10px;
+    }
+
+    @media (max-width: 600px) {
+      .app { padding: 14px; }
+      .grid { gap: 9px; }
+      .card { padding: 14px; }
+      .stat { font-size: 23px; }
+      .brand { font-size: 19px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <header>
+    <div>
+      <div class="brand">REBUILD 90</div>
+      <div class="tagline">DISCIPLINE. STRENGTH. PURPOSE.</div>
+    </div>
+    <div class="day-pill" id="dayPill">DAY 1 / 90</div>
+  </header>
+
+  <nav id="navigation">
+    <button class="active" data-page="home">Dashboard</button>
+    <button data-page="daily">Daily Plan</button>
+    <button data-page="workout">Fitness</button>
+    <button data-page="music">Hip-Hop Studio</button>
+    <button data-page="journal">Journal</button>
+    <button data-page="plan">90-Day Plan</button>
+    <button data-page="settings">Settings</button>
+  </nav>
+
+  <main>
+    <section class="page active" id="home">
+      <div class="eyebrow">Your transformation starts here</div>
+      <h1>Build the man<br>you want to become.</h1>
+      <p id="todayText"></p>
+
+      <div class="quote">
+        You don't need to feel ready. You need to keep your promises to yourself.
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="muted">Current day</div>
+          <div class="stat" id="currentDay">1</div>
+          <div class="muted">Out of 90 days</div>
+        </div>
+        <div class="card">
+          <div class="muted">Overall progress</div>
+          <div class="stat" id="overallProgress">0%</div>
+          <div class="muted">Daily tasks completed</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Your 90-day progress</h2>
+        <div class="progress-track">
+          <div class="progress-fill" id="mainProgress"></div>
+        </div>
+        <div class="muted" id="progressText">0 of 90 days completed</div>
+      </div>
+
+      <div class="card">
+        <h2>Today's priorities</h2>
+        <div id="homeTasks"></div>
+        <button class="gold-button" onclick="showPage('daily')">Open daily plan</button>
+      </div>
+
+      <div class="card">
+        <h2>Your four pillars</h2>
+        <div class="grid">
+          <div><span class="eyebrow">01</span><h3>Mind</h3><p class="muted">Focus, reflection and reading.</p></div>
+          <div><span class="eyebrow">02</span><h3>Body</h3><p class="muted">Strength, movement and energy.</p></div>
+          <div><span class="eyebrow">03</span><h3>Music</h3><p class="muted">Writing, practice and recording.</p></div>
+          <div><span class="eyebrow">04</span><h3>Discipline</h3><p class="muted">Keeping promises to yourself.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="daily">
+      <div class="eyebrow">One day at a time</div>
+      <h1>Daily execution</h1>
+      <p>Complete the actions. Do not wait for motivation.</p>
+
+      <div class="card">
+        <div class="row">
+          <div><h2>Today's checklist</h2><div class="muted" id="dailyDate"></div></div>
+          <div class="stat" id="dailyPercent">0%</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="dailyBar"></div></div>
+        <div id="dailyTasks"></div>
+      </div>
+
+      <div class="notice">
+        A difficult day is not a failed transformation. Do the smallest useful version of the task and continue tomorrow.
+      </div>
+    </section>
+
+    <section class="page" id="workout">
+      <div class="eyebrow">Build your body</div>
+      <h1>Strength training</h1>
+      <p>A beginner routine using your 5 kg dumbbell and bench.</p>
+
+      <div class="card">
+        <h2>Workout A — Full body</h2>
+        <div id="exercises"></div>
+        <button class="gold-button" onclick="completeWorkout()">Mark workout complete</button>
+        <p class="muted" id="workoutStatus"></p>
+      </div>
+
+      <div class="card">
+        <h2>Weekly schedule</h2>
+        <div class="phase"><b>Monday</b><p>Workout A</p></div>
+        <div class="phase"><b>Tuesday</b><p>20–30 minute walk and mobility</p></div>
+        <div class="phase"><b>Wednesday</b><p>Workout A</p></div>
+        <div class="phase"><b>Thursday</b><p>20–30 minute walk and mobility</p></div>
+        <div class="phase"><b>Friday</b><p>Workout A</p></div>
+        <div class="phase"><b>Saturday</b><p>Easy walk or enjoyable activity</p></div>
+        <div class="phase"><b>Sunday</b><p>Recovery and weekly review</p></div>
+      </div>
+
+      <div class="notice">
+        Start gently and prioritize technique. Stop if you feel sharp pain, dizziness or unusual symptoms. If you have an injury or health concern, seek professional advice before exercising.
+      </div>
+    </section>
+
+    <section class="page" id="music">
+      <div class="eyebrow">Create something real</div>
+      <h1>Hip-Hop Studio</h1>
+      <p>Your music deserves consistent work. Save your ideas here.</p>
+
+      <div class="card">
+        <h2>Daily music session</h2>
+        <p>Suggested 45-minute session:</p>
+        <div class="phase"><b>10 minutes</b><p>Listen closely to a track and study its flow.</p></div>
+        <div class="phase"><b>15 minutes</b><p>Write lyrics, ideas or hooks.</p></div>
+        <div class="phase"><b>10 minutes</b><p>Practice rhythm, delivery and breath control.</p></div>
+        <div class="phase"><b>10 minutes</b><p>Record yourself or review your performance.</p></div>
+      </div>
+
+      <div class="card">
+        <h2>Save lyrics or ideas</h2>
+        <input class="field" id="musicTitle" placeholder="Song title or idea">
+        <select class="field" id="musicType">
+          <option>Lyrics</option>
+          <option>Song idea</option>
+          <option>Hook</option>
+          <option>Verse</option>
+          <option>Recording notes</option>
+        </select>
+        <textarea class="field" id="musicText" placeholder="Write your lyrics or music ideas here..."></textarea>
+        <button class="gold-button" onclick="saveMusic()">Save to studio</button>
+      </div>
+
+      <div class="card">
+        <h2>Your saved work</h2>
+        <div id="musicEntries"></div>
+      </div>
+    </section>
+
+    <section class="page" id="journal">
+      <div class="eyebrow">Know yourself</div>
+      <h1>Private journal</h1>
+      <p>Be honest. This space is for your thoughts, not for judgment.</p>
+
+      <div class="card">
+        <h2>Daily reflection</h2>
+        <label class="muted" for="journalMood">How are you feeling?</label>
+        <select class="field" id="journalMood">
+          <option>Focused</option>
+          <option>Calm</option>
+          <option>Motivated</option>
+          <option>Anxious</option>
+          <option>Frustrated</option>
+          <option>Low energy</option>
+          <option>Uncertain</option>
+        </select>
+
+        <label class="muted" for="journalWin">What did I do well today?</label>
+        <textarea class="field" id="journalWin" placeholder="Even a small win counts..."></textarea>
+
+        <label class="muted" for="journalImprove">What could I improve?</label>
+        <textarea class="field" id="journalImprove" placeholder="Be honest, but don't insult yourself..."></textarea>
+
+        <label class="muted" for="journalTomorrow">What is tomorrow's most important action?</label>
+        <textarea class="field" id="journalTomorrow" placeholder="One clear action..."></textarea>
+
+        <button class="gold-button" onclick="saveJournal()">Save reflection</button>
+      </div>
+
+      <div class="card">
+        <h2>Past reflections</h2>
+        <div id="journalEntries"></div>
+      </div>
+    </section>
+
+    <section class="page" id="plan">
+      <div class="eyebrow">The bigger picture</div>
+      <h1>Your 90-day roadmap</h1>
+      <p>Build the foundation first. Then increase the challenge.</p>
+
+      <div class="card">
+        <div class="phase">
+          <span class="eyebrow">Days 1–14</span>
+          <h2>Phase 1 — Reset</h2>
+          <p>Establish a routine, reduce mindless scrolling, start moving, and reconnect with music.</p>
+        </div>
+        <div class="phase">
+          <span class="eyebrow">Days 15–30</span>
+          <h2>Phase 2 — Foundation</h2>
+          <p>Build consistency in exercise, reading, writing and daily reflection.</p>
+        </div>
+        <div class="phase">
+          <span class="eyebrow">Days 31–60</span>
+          <h2>Phase 3 — Development</h2>
+          <p>Improve your strength, write complete songs, practice recording and build confidence through action.</p>
+        </div>
+        <div class="phase">
+          <span class="eyebrow">Days 61–90</span>
+          <h2>Phase 4 — Transformation</h2>
+          <p>Review your progress, finish music projects, strengthen your routines and set your next 90-day goals.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Weekly review</h2>
+        <textarea class="field" id="weeklyReview" placeholder="What worked this week? What did not? What will I change next week?"></textarea>
+        <button class="gold-button" onclick="saveWeeklyReview()">Save weekly review</button>
+        <div id="weeklyReviews"></div>
+      </div>
+    </section>
+
+    <section class="page" id="settings">
+      <div class="eyebrow">Your data and preferences</div>
+      <h1>Settings</h1>
+
+      <div class="card">
+        <h2>90-day start date</h2>
+        <p class="muted">The app starts your 90-day journey on the first day you open it. You can change the date here.</p>
+        <input class="field" type="date" id="startDate">
+        <button class="gold-button" onclick="changeStartDate()">Update start date</button>
+      </div>
+
+      <div class="card">
+        <h2>Backup your data</h2>
+        <p class="muted">Download a backup of your checklists, lyrics, journal and reviews.</p>
+        <button class="gold-button" onclick="exportData()">Export backup</button>
+        <hr style="border-color:var(--border); margin:20px 0">
+        <label class="muted" for="importFile">Restore from a previous backup</label>
+        <input class="field" type="file" id="importFile" accept=".json,application/json">
+        <button class="secondary-button" onclick="importData()">Restore backup</button>
+      </div>
+
+      <div class="card">
+        <h2>Reset app data</h2>
+        <p class="muted">This permanently clears your saved app data on this device. Export a backup first if you need it.</p>
+        <button class="danger-button" onclick="resetData()">Reset everything</button>
+      </div>
+
+      <div class="notice">
+        Your journal and music entries are stored in this browser on this device. They are not automatically synchronized to another phone or account.
+      </div>
+    </section>
+  </main>
+
+  <footer>REBUILD 90 · YOUR LIFE, BUILT BY YOUR ACTIONS.</footer>
+</div>
+
+<script>
+const STORAGE_KEY = "rebuild90_data_v1";
+
+const defaultTasks = [
+  { id: "bed", title: "Make my bed", note: "Start the day with one completed action." },
+  { id: "walk", title: "Walk or move for 20 minutes", note: "Get outside and move your body." },
+  { id: "read", title: "Read for 10–20 minutes", note: "Learn something instead of scrolling." },
+  { id: "music", title: "Practice music for 45 minutes", note: "Write, study flow, rehearse or record." },
+  { id: "reflect", title: "Write a daily reflection", note: "Review your actions and thoughts." },
+  { id: "phone", title: "Control unnecessary scrolling", note: "Avoid TikTok during your first waking hour and music session." }
+];
+
+const exercises = [
+  ["Bodyweight squats", "3 sets × 12 repetitions"],
+  ["Push-ups", "3 sets × 6–10 repetitions; use an easier variation if needed"],
+  ["One-arm dumbbell rows", "3 sets × 12 each side"],
+  ["Dumbbell shoulder press", "2 sets × 10 repetitions"],
+  ["Plank", "3 sets × 20 seconds"]
+];
+
+function loadData() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && typeof saved === "object") return saved;
+  } catch (e) {}
+  return {};
+}
+
+let data = loadData();
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function localDateString(date = new Date()) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+if (!data.startDate) {
+  data.startDate = localDateString();
+  saveData();
+}
+
+function dayNumber() {
+  const start = new Date(data.startDate + "T00:00:00");
+  const today = new Date(localDateString() + "T00:00:00");
+  return Math.max(1, Math.min(90, Math.floor((today - start) / 86400000) + 1));
+}
+
+function todayKey() {
+  return localDateString();
+}
+
+function getTodayTasks() {
+  if (!data.tasks) data.tasks = {};
+  if (!data.tasks[todayKey()]) data.tasks[todayKey()] = {};
+  return data.tasks[todayKey()];
+}
+
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll("nav button").forEach(el => el.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
+  document.querySelector(`nav button[data-page="${page}"]`).classList.add("active");
+  renderAll();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.querySelectorAll("nav button").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.page));
+});
+
+function taskHTML(task, checked, onChange) {
+  return `
+    <div class="task ${checked ? "done" : ""}">
+      <input type="checkbox" ${checked ? "checked" : ""} onchange="${onChange}">
+      <label><b>${task.title}</b><small>${task.note || ""}</small></label>
+    </div>`;
+}
+
+function renderTasks(targetId, compact = false) {
+  const state = getTodayTasks();
+  const target = document.getElementById(targetId);
+  target.innerHTML = defaultTasks.map(task => {
+    const html = taskHTML(
+      task,
+      !!state[task.id],
+      `toggleTask('${task.id}', this.checked)`
+    );
+    return compact ? html : html;
+  }).join("");
+}
+
+function toggleTask(id, checked) {
+  getTodayTasks()[id] = checked;
+  saveData();
+  renderAll();
+}
+
+function renderDashboard() {
+  const day = dayNumber();
+  const state = getTodayTasks();
+  const count = defaultTasks.filter(t => state[t.id]).length;
+  const percent = Math.round(count / defaultTasks.length * 100);
+
+  document.getElementById("dayPill").textContent = `DAY ${day} / 90`;
+  document.getElementById("currentDay").textContent = day;
+  document.getElementById("todayText").textContent =
+    new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+  const allDays = Object.values(data.tasks || {});
+  let completed = 0;
+  let possible = 0;
+
+  allDays.forEach(dayTasks => {
+    possible += defaultTasks.length;
+    completed += defaultTasks.filter(t => dayTasks[t.id]).length;
+  });
+
+  const overall = possible ? Math.round(completed / possible * 100) : 0;
+
+  document.getElementById("overallProgress").textContent = overall + "%";
+  document.getElementById("mainProgress").style.width = Math.min(100, day / 90 * 100) + "%";
+  document.getElementById("progressText").textContent =
+    `${completed} daily actions completed · Day ${day} of 90`;
+
+  renderTasks("homeTasks", true);
+  document.getElementById("dailyDate").textContent = todayKey();
+  document.getElementById("dailyPercent").textContent = percent + "%";
+  document.getElementById("dailyBar").style.width = percent + "%";
+  renderTasks("dailyTasks");
+}
+
+function renderExercises() {
+  document.getElementById("exercises").innerHTML = exercises.map((item, index) => `
+    <div class="task">
+      <div style="color:var(--gold);font-weight:bold">${index + 1}.</div>
+      <label><b>${item[0]}</b><small>${item[1]}</small></label>
+    </div>
+  `).join("");
+
+  const completed = (data.workouts || []).includes(todayKey());
+  document.getElementById("workoutStatus").textContent =
+    completed ? "Workout marked complete for today." : "Today's workout has not been marked complete.";
+}
+
+function completeWorkout() {
+  if (!data.workouts) data.workouts = [];
+  if (!data.workouts.includes(todayKey())) data.workouts.push(todayKey());
+  saveData();
+  renderExercises();
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#039;"
+  })[char]);
+}
+
+function saveMusic() {
+  const title = document.getElementById("musicTitle").value.trim();
+  const type = document.getElementById("musicType").value;
+  const content = document.getElementById("musicText").value.trim();
+
+  if (!content) return alert("Write something before saving.");
+  if (!data.music) data.music = [];
+
+  data.music.unshift({
+    id: Date.now(),
+    title: title || "Untitled idea",
+    type,
+    content,
+    date: todayKey()
+  });
+
+  saveData();
+  document.getElementById("musicTitle").value = "";
+  document.getElementById("musicText").value = "";
+  renderMusic();
+}
+
+function deleteMusic(id) {
+  if (!confirm("Delete this music entry?")) return;
+  data.music = (data.music || []).filter(entry => entry.id !== id);
+  saveData();
+  renderMusic();
+}
+
+function renderMusic() {
+  const entries = data.music || [];
+  document.getElementById("musicEntries").innerHTML = entries.length
+    ? entries.map(entry => `
+      <div class="entry">
+        <b>${escapeHTML(entry.title)}</b>
+        <small> · ${escapeHTML(entry.type)} · ${escapeHTML(entry.date)}</small>
+        <p>${escapeHTML(entry.content)}</p>
+        <button class="danger-button" onclick="deleteMusic(${entry.id})">Delete</button>
+      </div>
+    `).join("")
+    : '<p class="muted">Your saved lyrics and ideas will appear here.</p>';
+}
+
+function saveJournal() {
+  const mood = document.getElementById("journalMood").value;
+  const win = document.getElementById("journalWin").value.trim();
+  const improve = document.getElementById("journalImprove").value.trim();
+  const tomorrow = document.getElementById("journalTomorrow").value.trim();
+
+  if (!win && !improve && !tomorrow) {
+    return alert("Write at least one reflection before saving.");
+  }
+
+  if (!data.journal) data.journal = [];
+  data.journal.unshift({
+    id: Date.now(), date: todayKey(), mood, win, improve, tomorrow
+  });
+
+  saveData();
+  document.getElementById("journalWin").value = "";
+  document.getElementById("journalImprove").value = "";
+  document.getElementById("journalTomorrow").value = "";
+  renderJournal();
+}
+
+function deleteJournal(id) {
+  if (!confirm("Delete this journal entry?")) return;
+  data.journal = (data.journal || []).filter(entry => entry.id !== id);
+  saveData();
+  renderJournal();
+}
+
+function renderJournal() {
+  const entries = data.journal || [];
+  document.getElementById("journalEntries").innerHTML = entries.length
+    ? entries.map(entry => `
+      <div class="entry">
+        <b>${escapeHTML(entry.date)} · ${escapeHTML(entry.mood)}</b>
+        ${entry.win ? `<p><b>Win:</b> ${escapeHTML(entry.win)}</p>` : ""}
+        ${entry.improve ? `<p><b>Improve:</b> ${escapeHTML(entry.improve)}</p>` : ""}
+        ${entry.tomorrow ? `<p><b>Tomorrow:</b> ${escapeHTML(entry.tomorrow)}</p>` : ""}
+        <button class="danger-button" onclick="deleteJournal(${entry.id})">Delete</button>
+      </div>
+    `).join("")
+    : '<p class="muted">Your reflections will appear here.</p>';
+}
+
+function saveWeeklyReview() {
+  const content = document.getElementById("weeklyReview").value.trim();
+  if (!content) return alert("Write your weekly review first.");
+
+  if (!data.reviews) data.reviews = [];
+  data.reviews.unshift({ date: todayKey(), content });
+  saveData();
+
+  document.getElementById("weeklyReview").value = "";
+  renderReviews();
+}
+
+function renderReviews() {
+  const entries = data.reviews || [];
+  document.getElementById("weeklyReviews").innerHTML = entries.map(entry => `
+    <div class="entry">
+      <small>${escapeHTML(entry.date)}</small>
+      <p>${escapeHTML(entry.content)}</p>
+    </div>
+  `).join("");
+}
+
+function changeStartDate() {
+  const value = document.getElementById("startDate").value;
+  if (!value) return alert("Choose a start date.");
+  if (!confirm("Changing the start date changes your displayed 90-day progress. Your saved entries will remain.")) return;
+
+  data.startDate = value;
+  saveData();
+  renderAll();
+  alert("Start date updated.");
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "rebuild-90-backup.json";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData() {
+  const file = document.getElementById("importFile").files[0];
+  if (!file) return alert("Choose a backup JSON file first.");
+  if (!confirm("Restoring a backup replaces the current app data. Continue?")) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      if (!imported || typeof imported !== "object" || !imported.startDate) {
+        throw new Error("Invalid backup");
+      }
+      data = imported;
+      saveData();
+      renderAll();
+      alert("Backup restored.");
+    } catch (error) {
+      alert("This backup file is invalid or damaged.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetData() {
+  if (!confirm("This will permanently delete your saved tasks, lyrics, journal and reviews. Are you sure?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  data = { startDate: localDateString() };
+  saveData();
+  renderAll();
+  alert("App data has been reset.");
+}
+
+function renderAll() {
+  renderDashboard();
+  renderExercises();
+  renderMusic();
+  renderJournal();
+  renderReviews();
+  document.getElementById("startDate").value = data.startDate;
+}
+
+renderAll();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(error => {
+      console.log("Offline service worker could not be registered:", error);
+    });
+  });
+}
+</script>
+</body>
+</html>
